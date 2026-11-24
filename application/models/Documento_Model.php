@@ -1,127 +1,67 @@
 <?php
-defined('BASEPATH') or exit('No direct script access allowed');
-
+defined('BASEPATH') OR exit('No direct script access allowed');
 class Documento_model extends CI_Model
 {
-
-    public function guardar_documento($tipoDocumento, $titulo, $nombreArchivo, $maestro_id)
+    public function guardar_documento($tipoDocumento,$titulo,$nombreArchivo,$maestro_id)
     {
-        $data = array(
-            'usuario_id' => $this->session->userdata('id_usuario'),
-            'titulo' => $titulo,
-            'archivo_path' => $nombreArchivo,
-            'estado' => 'pendiente',
-            'fecha_subida' => date('Y-m-d H:i:s'),
-            'maestro_id' => $maestro_id,
-        );
-
-        $this->db->insert('documentos', $data);
+        return $this->db->insert('documentos',array(
+            'usuario_id'=>(int)$this->session->userdata('id_usuario'),
+            'titulo'=>trim($titulo),'archivo_path'=>basename($nombreArchivo),
+            'estado'=>'Pendiente','fecha_subida'=>date('Y-m-d H:i:s'),
+            'maestro_id'=>(int)$maestro_id
+        ));
     }
-
     public function obtener_todos_archivos()
     {
-        $query = $this->db->get('documentos');
-        return $query->result_array();
+        return $this->db->order_by('fecha_subida','DESC')->get('documentos')->result_array();
     }
-
     public function obtener_maestros()
     {
-        $this->db->where('tipo_usuario', 'profesor');
-        $query = $this->db->get('usuarios');
-        return $query->result_array();
+        return $this->db->where('tipo_usuario','Profesor')->order_by('nombre','ASC')->get('usuarios')->result_array();
     }
-
     public function obtener_documentos_del_alumno($usuario_id)
     {
-        $this->db->select('*');
-        $this->db->from('documentos');
-        $this->db->where('usuario_id', $usuario_id);
-
-        $query = $this->db->get();
-
-        if ($query->num_rows() > 0) {
-            return $query->result_array();
-        } else {
-            return array();
-        }
+        return $this->db->where('usuario_id',(int)$usuario_id)->order_by('fecha_subida','DESC')->get('documentos')->result_array();
     }
-
     public function obtener_documentos_pendientes_del_maestro($maestro_id)
     {
-        $this->db->select('documentos.*, usuarios.nombre as nombre_alumno');
-        $this->db->from('documentos');
-        $this->db->join('usuarios', 'usuarios.id = documentos.usuario_id');
-        $this->db->where('documentos.maestro_id', $maestro_id);
-
-        $query = $this->db->get();
-
-        if ($query->num_rows() > 0) {
-            return $query->result_array();
-        } else {
-            return array();
-        }
+        return $this->db->select('documentos.*, usuarios.nombre AS nombre_alumno, usuarios.apellidos AS apellidos_alumno')
+            ->from('documentos')->join('usuarios','usuarios.id=documentos.usuario_id')
+            ->where('documentos.maestro_id',(int)$maestro_id)->where('documentos.estado','Pendiente')
+            ->order_by('documentos.fecha_subida','DESC')->get()->result_array();
     }
-
-    public function obtener_documento_por_id($idDocumento)
+    public function obtener_documento_por_id($id)
     {
-        $this->db->where('id', $idDocumento);
-        $query = $this->db->get('documentos');
-
-        if ($query->num_rows() > 0) {
-            return $query->row_array();
-        } else {
-            return null;
-        }
+        return $this->db->where('id',(int)$id)->limit(1)->get('documentos')->row_array();
     }
-
-    public function procesar_rechazo_documento($idDocumento, $motivoRechazo)
+    public function procesar_rechazo_documento($id,$motivo,$maestro_id)
     {
-        $data = array(
-            'estado' => 'rechazado',
-            'motivo' => $motivoRechazo,
-        );
-
-        $this->db->where('id', $idDocumento);
-        $this->db->update('documentos', $data);
+        return $this->db->where('id',(int)$id)->where('maestro_id',(int)$maestro_id)->where('estado','Pendiente')
+            ->update('documentos',array('estado'=>'Rechazado','motivo'=>trim($motivo)));
     }
-
-    public function eliminarDocumento($documento_id)
+    public function eliminarDocumento($id,$usuario_id)
     {
-        $this->db->where('id', $documento_id);
-        $this->db->delete('documentos');
+        return $this->db->where('id',(int)$id)->where('usuario_id',(int)$usuario_id)
+            ->where('estado','Pendiente')->delete('documentos');
     }
-
-    public function aceptarDocumento($idDocumento, $comentario)
+    public function aceptarDocumento($id,$comentario,$maestro_id)
     {
-        $data = array(
-            'estado' => 'Aceptado',
-            'motivo' => $comentario
-        );
-        $this->db->where('id', $idDocumento);
-        $this->db->update('documentos', $data);
+        return $this->db->where('id',(int)$id)->where('maestro_id',(int)$maestro_id)->where('estado','Pendiente')
+            ->update('documentos',array('estado'=>'Aceptado','motivo'=>trim((string)$comentario)));
     }
-
-    public function obtener_tipos_documentos() {
-        $query = $this->db->get('tipos_documentos');
-        return $query->result_array();
+    public function obtener_tipos_documentos()
+    {
+        return $this->db->order_by('nombre','ASC')->get('tipos_documentos')->result_array();
     }
-
-    public function agregarTipoDocumento($nombreTipoDocumento, $propositoTipoDocumento, $contenidoTipoDocumento, $documento_path) {
-        // Lógica para insertar los datos en la base de datos junto con el camino del archivo
-        $data = array(
-            'nombre' => $nombreTipoDocumento,
-            'proposito' => $propositoTipoDocumento,
-            'contenido' => $contenidoTipoDocumento,
-            'documento_path' => $documento_path
-        );
-    
-        $this->db->insert('tipos_documentos', $data);
+    public function agregarTipoDocumento($nombre,$proposito,$contenido,$path)
+    {
+        return $this->db->insert('tipos_documentos',array(
+            'nombre'=>trim($nombre),'proposito'=>trim($proposito),
+            'contenido'=>trim($contenido),'documento_path'=>basename($path)
+        ));
     }
-    
-
-    
-
+    public function maestroExiste($id)
+    {
+        return $this->db->where('id',(int)$id)->where('tipo_usuario','Profesor')->count_all_results('usuarios')===1;
+    }
 }
-
-
-

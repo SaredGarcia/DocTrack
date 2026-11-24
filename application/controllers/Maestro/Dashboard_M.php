@@ -1,9 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Dashboard_M extends CI_Controller {
+class Dashboard_M extends MY_Controller {
 	public function __construct()
     {
         parent::__construct();
+        $this->requireRole(array('Profesor'));
 		$this->load->model('Documento_Model');
 		$this->load->helper('url');
 	}

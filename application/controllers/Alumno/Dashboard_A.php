@@ -1,11 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Dashboard_A extends CI_Controller
+class Dashboard_A extends MY_Controller
 {
     public function __construct()
     {
         parent::__construct();
+        $this->requireRole(array('Estudiante'));
         $this->load->library('form_validation');
         $this->load->model('Documento_model');
     }
@@ -16,7 +17,7 @@ class Dashboard_A extends CI_Controller
 		$data['documentos'] = $this->Documento_model->obtener_documentos_del_alumno($this->session->userdata('id_usuario'));
         $data['maestros'] = $this->Documento_model->obtener_maestros();
         $data['tiposDocumentos'] = $this->Documento_model->obtener_tipos_documentos();
-        $data['documentos'] = $this->Documento_model->obtener_tipos_documentos();
+        
         $this->load->view('Alumno/Inicio', $data);
 
        
