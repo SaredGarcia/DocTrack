@@ -1,11 +1,12 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Dashboard extends CI_Controller
+class Dashboard extends MY_Controller
 {
     public function __construct()
     {
         parent::__construct();
+        $this->requireRole(array('Admin'));
         $this->load->model('Admin_Model');
         $this->load->model('Documento_model');
         $this->load->library('form_validation');
@@ -75,9 +76,9 @@ class Dashboard extends CI_Controller
     {
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
         $this->form_validation->set_rules('apellidos', 'Apellidos', 'required');
-        $this->form_validation->set_rules('correo', 'Correo', 'required');
-        $this->form_validation->set_rules('contrasena', 'Contraseña', 'required');
-        $this->form_validation->set_rules('tipo_usuario', 'Tipo de Usuario', 'required');
+        $this->form_validation->set_rules('correo', 'Correo', 'required|trim|valid_email|is_unique[usuarios.correo]');
+        $this->form_validation->set_rules('contrasena', 'Contraseña', 'required|min_length[10]');
+        $this->form_validation->set_rules('tipo_usuario', 'Tipo de Usuario', 'required|in_list[Estudiante,Profesor,Admin]');
 
         if ($this->form_validation->run() === FALSE) {
             redirect('Admin/Dashboard/Inicio');
@@ -91,7 +92,7 @@ class Dashboard extends CI_Controller
                 'nombre' => $nombre,
                 'apellidos' => $apellidos,
                 'correo' => $correo,
-                'contrasena' => $contrasena,
+                'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT),
                 'tipo_usuario' => $tipo_usuario
             );
             $this->Admin_Model->crear_usuario($data);

@@ -1,159 +1,57 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 26-08-2024 a las 06:45:07
--- Versión del servidor: 10.4.20-MariaDB
--- Versión de PHP: 7.4.21
+-- DocTrack - esquema limpio para portafolio (MySQL 8 / MariaDB 10.4+)
+-- Cuentas demo: admin@doctrack.test, profesor@doctrack.test, alumno@doctrack.test
+-- Contraseña local de las tres cuentas: DocTrackDemo2026! (almacenada como hash).
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+CREATE DATABASE IF NOT EXISTS doctrack CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE doctrack;
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS documentos;
+DROP TABLE IF EXISTS tipos_documentos;
+DROP TABLE IF EXISTS usuarios;
+SET FOREIGN_KEY_CHECKS=1;
 
+CREATE TABLE usuarios (
+ id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+ nombre VARCHAR(50) NOT NULL,
+ apellidos VARCHAR(50) NOT NULL,
+ correo VARCHAR(100) NOT NULL,
+ contrasena VARCHAR(255) NOT NULL,
+ tipo_usuario ENUM('Estudiante','Profesor','Admin') NOT NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY(id), UNIQUE KEY uq_usuarios_correo(correo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+CREATE TABLE tipos_documentos (
+ id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+ nombre VARCHAR(100) NOT NULL,
+ proposito VARCHAR(255) NOT NULL,
+ contenido VARCHAR(255) NOT NULL,
+ documento_path VARCHAR(255) DEFAULT NULL,
+ PRIMARY KEY(id), UNIQUE KEY uq_tipos_documentos_nombre(nombre)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Base de datos: `awva`
---
+CREATE TABLE documentos (
+ id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+ usuario_id INT UNSIGNED NOT NULL,
+ titulo VARCHAR(100) NOT NULL,
+ archivo_path VARCHAR(255) NOT NULL,
+ estado ENUM('Pendiente','Aceptado','Rechazado') NOT NULL DEFAULT 'Pendiente',
+ fecha_subida TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ maestro_id INT UNSIGNED NOT NULL,
+ motivo TEXT DEFAULT NULL,
+ PRIMARY KEY(id),
+ KEY idx_documentos_alumno(usuario_id,fecha_subida),
+ KEY idx_documentos_maestro_estado(maestro_id,estado,fecha_subida),
+ CONSTRAINT fk_documentos_alumno FOREIGN KEY(usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+ CONSTRAINT fk_documentos_maestro FOREIGN KEY(maestro_id) REFERENCES usuarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+INSERT INTO usuarios(nombre,apellidos,correo,contrasena,tipo_usuario) VALUES
+('Alex','Estudiante Demo','alumno@doctrack.test','$2y$12$DulDf.a6MICDKYqX.KgsS.DHLcsftpS1FQ.AQ9iC5k3GN892SB0Zu','Estudiante'),
+('Sam','Profesor Demo','profesor@doctrack.test','$2y$12$DulDf.a6MICDKYqX.KgsS.DHLcsftpS1FQ.AQ9iC5k3GN892SB0Zu','Profesor'),
+('Taylor','Administrador Demo','admin@doctrack.test','$2y$12$DulDf.a6MICDKYqX.KgsS.DHLcsftpS1FQ.AQ9iC5k3GN892SB0Zu','Admin');
 
---
--- Estructura de tabla para la tabla `documentos`
---
-
-CREATE TABLE `documentos` (
-  `id` int(11) NOT NULL,
-  `usuario_id` int(11) DEFAULT NULL,
-  `titulo` varchar(100) NOT NULL,
-  `archivo_path` varchar(255) NOT NULL,
-  `estado` enum('Pendiente','Aceptado','Rechazado') DEFAULT 'Pendiente',
-  `fecha_subida` timestamp NOT NULL DEFAULT current_timestamp(),
-  `maestro_id` int(11) DEFAULT NULL,
-  `motivo` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `documentos`
---
-
-INSERT INTO `documentos` (`id`, `usuario_id`, `titulo`, `archivo_path`, `estado`, `fecha_subida`, `maestro_id`, `motivo`) VALUES
-(1, 2, 'Carta Termino', 'Carta_Termino_1724644692.pdf', 'Pendiente', '2024-08-26 11:58:12', 1, NULL),
-(2, 2, 'Memoria', 'Memoria_1724644968.pdf', 'Pendiente', '2024-08-26 12:02:48', 1, NULL);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `tipos_documentos`
---
-
-CREATE TABLE `tipos_documentos` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `proposito` varchar(255) NOT NULL,
-  `contenido` varchar(255) NOT NULL,
-  `documento_path` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `tipos_documentos`
---
-
-INSERT INTO `tipos_documentos` (`id`, `nombre`, `proposito`, `contenido`, `documento_path`) VALUES
-(1, 'Carta Presentacion', 'Introducirte a un empleador potencial y resaltar tus habilidades y experiencias relevantes.', 'Información sobre quién eres, tu interés en la posición, y cómo tus habilidades y experiencia se alinean con los requisitos del trabajo.', 'Carta_Presentacion_1724641488.pdf'),
-(2, 'Carta de Aceptacion', 'Confirmar formalmente que aceptas una oferta de empleo, admisión a una institución educativa, participación en un programa, etc.', 'Agradecimiento por la oferta, confirmación de aceptación, detalles relevantes (fecha de inicio, condiciones, etc.).', 'Carta_de_Aceptacion_1724642083.pdf'),
-(3, 'Memoria de Estadias', 'Documentar y reflexionar sobre las experiencias y aprendizajes adquiridos durante un período específico de prácticas o estancias.', 'Descripción de las actividades realizadas, logros, desafíos superados y cómo la experiencia contribuyó al crecimiento personal o profesional.', 'Memoria_de_Estadias_1724642293.pdf'),
-(4, 'Carta de Termino', 'Comunicar la culminación exitosa de un programa, curso, proyecto o trabajo.', 'Resumen de lo logrado, agradecimientos a las personas o instituciones involucradas, y cualquier información adicional necesaria.', 'Carta_de_Termino_1724642737.pdf');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `apellidos` varchar(50) NOT NULL,
-  `correo` varchar(100) NOT NULL,
-  `contrasena` varchar(255) NOT NULL,
-  `tipo_usuario` enum('Estudiante','Profesor','Admin') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombre`, `apellidos`, `correo`, `contrasena`, `tipo_usuario`) VALUES
-(1, 'Dante', 'Garcia', 'sared646@gmial.com', '123', 'Profesor'),
-(2, 'Alumno', 'Garcia', 'sared646@gmail.com', '123', 'Estudiante'),
-(4, 'Alberto', 'Garcia', 'sared66@gmail.com', '123', 'Profesor'),
-(5, 'Juanma', 'Fernandez', 'sared46@gmail.com', '123', 'Profesor'),
-(6, 'Admin', 'Admin', 'asdasd@646gmail.com', '123', 'Admin');
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `documentos`
---
-ALTER TABLE `documentos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `usuario_id` (`usuario_id`),
-  ADD KEY `maestro_id` (`maestro_id`);
-
---
--- Indices de la tabla `tipos_documentos`
---
-ALTER TABLE `tipos_documentos`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `documentos`
---
-ALTER TABLE `documentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `tipos_documentos`
---
-ALTER TABLE `tipos_documentos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `documentos`
---
-ALTER TABLE `documentos`
-  ADD CONSTRAINT `documentos_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `documentos_ibfk_2` FOREIGN KEY (`maestro_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO tipos_documentos(nombre,proposito,contenido) VALUES
+('Carta de presentación','Presentar al estudiante y sus objetivos.','Objetivo, datos ficticios y firma.'),
+('Memoria de estadías','Documentar actividades realizadas.','Resumen de actividades y aprendizajes.'),
+('Carta de término','Registrar la conclusión del proceso.','Fecha de término y observaciones.');

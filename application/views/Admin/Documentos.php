@@ -7,6 +7,7 @@
     <title>Tipos de Documentos</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="<?php echo base_url('assets/css/admin.css'); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url('assets/css/doctrack-modern.css'); ?>" rel="stylesheet">
 </head>
 
 <body>

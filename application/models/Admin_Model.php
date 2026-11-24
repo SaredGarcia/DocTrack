@@ -1,43 +1,46 @@
 <?php
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Admin_Model extends CI_Model
 {
     public function obtener_todos_usuarios()
     {
-        $query = $this->db->get('usuarios');
-        return $query->result_array();
-    }
-    public function actualizar_usuario($idUsuario, $datosUsuario)
-    {
-        $this->db->where('id', $idUsuario);
-        $this->db->update('usuarios', $datosUsuario);
+        return $this->db->select('id,nombre,apellidos,correo,tipo_usuario')
+            ->order_by('nombre','ASC')->get('usuarios')->result_array();
     }
 
-    public function actualizar_tipo($id, $datosUsuario)
+    public function obtener_usuario_por_id($id)
     {
-        $this->db->where('id', $id);
-        $this->db->update('tipos_documentos', $datosUsuario);
+        return $this->db->where('id',(int)$id)->get('usuarios')->row_array();
+    }
+
+    public function actualizar_usuario($idUsuario,$datosUsuario)
+    {
+        return $this->db->where('id',(int)$idUsuario)->update('usuarios',$datosUsuario);
+    }
+
+    public function actualizar_tipo($id,$datos)
+    {
+        return $this->db->where('id',(int)$id)->update('tipos_documentos',$datos);
     }
 
     public function eliminar($idUsuario)
     {
-        $this->db->where('id', $idUsuario);
-        $this->db->delete('usuarios');
+        return $this->db->where('id',(int)$idUsuario)->delete('usuarios');
     }
 
     public function eliminartipo($id)
     {
-        $this->db->where('id', $id);
-        $this->db->delete('tipos_documentos');
+        return $this->db->where('id',(int)$id)->delete('tipos_documentos');
     }
 
-    public function crear_usuario($data) {
-        $this->db->insert('usuarios', $data);
+    public function crear_usuario($data)
+    {
+        return $this->db->insert('usuarios',$data);
     }
 
-    public function obtener_tipos_documentos() {
-        $query = $this->db->get('tipos_documentos');
-        return $query->result_array();
+    public function obtener_tipos_documentos()
+    {
+        return $this->db->order_by('nombre','ASC')->get('tipos_documentos')->result_array();
     }
 }

@@ -1,23 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class Auth_Model extends CI_Model {
-    public function obtenerUsuario($correo, $contrasena)
+class Auth_Model extends CI_Model
+{
+    public function obtenerUsuario($correo)
     {
-        $this->db->where('nombre', $correo);
-        $this->db->where('contrasena', $contrasena);
-
-        $query = $this->db->get('usuarios');
-
-        if ($query->num_rows() == 1) {
-            return $query->row();
-        } else {
-            return false;
-        }
+        return $this->db->select('id,nombre,apellidos,correo,contrasena,tipo_usuario')
+            ->where('correo',strtolower(trim($correo)))->limit(1)->get('usuarios')->row();
     }
-
-
 }
-
-
-
