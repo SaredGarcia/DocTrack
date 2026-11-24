@@ -329,7 +329,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/userguide3/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '';
+$config['encryption_key'] = getenv('CI_ENCRYPTION_KEY') ?: ''; // Configurar una clave aleatoria en el entorno.
 
 /*
 |--------------------------------------------------------------------------
@@ -414,8 +414,8 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']	= '';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= TRUE;
+$config['cookie_secure']	= (ENVIRONMENT === 'production');
+$config['cookie_httponly']	= TRUE;
 $config['cookie_samesite'] 	= 'Lax';
 
 /*

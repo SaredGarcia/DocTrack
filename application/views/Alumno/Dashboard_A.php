@@ -6,7 +6,8 @@
     <title>Interfaz del Usuario - Alumno</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="<?php echo base_url('assets/css/Dashboard_M.css'); ?>" rel="stylesheet" type="text/css" />
-<link href="<?php echo base_url('assets/css/doctrack-modern.css'); ?>" rel="stylesheet">\n</head>
+<link href="<?php echo base_url('assets/css/doctrack-modern.css'); ?>" rel="stylesheet">
+</head>
 <body>
 
     <div id="navbar-container">
