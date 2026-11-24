@@ -36,7 +36,7 @@ Proyecto de portafolio que demuestra PHP, CodeIgniter 3, MySQL, autenticación p
    cd DocTrack
    ~~~
 2. Coloca el proyecto en el directorio público de Apache, por ejemplo C:/xampp/htdocs/DocTrack.
-3. Importa BDD/awva.sql desde phpMyAdmin o ejecuta:
+3. Importa BDD/awva.sql desde phpMyAdmin o ejecuta. **Atención:** el script recrea las tablas y elimina las tablas existentes de la base doctrack; úsalo únicamente en una base nueva o respaldada:
    ~~~bash
    mysql -u root -p < BDD/awva.sql
    ~~~
