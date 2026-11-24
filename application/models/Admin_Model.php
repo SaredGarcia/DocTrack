@@ -8,7 +8,7 @@ class Admin_Model extends CI_Model
         $query = $this->db->get('usuarios');
         return $query->result_array();
     }
-    public function obtener_usuario_por_id($id)\n    {\n        return $this->db->where('id', (int) $id)->get('usuarios')->row_array();\n    }\n\n    public function actualizar_usuario($idUsuario, $datosUsuario)
+    public function actualizar_usuario($idUsuario, $datosUsuario)
     {
         $this->db->where('id', $idUsuario);
         $this->db->update('usuarios', $datosUsuario);

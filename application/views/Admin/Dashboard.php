@@ -7,7 +7,7 @@
     <title>Gestión de Usuarios</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="<?php echo base_url('assets/css/admin.css'); ?>" rel="stylesheet" type="text/css" />
-</head>
+<link href="<?php echo base_url('assets/css/doctrack-modern.css'); ?>" rel="stylesheet">\n</head>
 
 <body>
 

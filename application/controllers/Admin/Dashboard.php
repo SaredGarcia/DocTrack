@@ -76,8 +76,8 @@ class Dashboard extends MY_Controller
     {
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
         $this->form_validation->set_rules('apellidos', 'Apellidos', 'required');
-        $this->form_validation->set_rules('correo', 'Correo', 'required|trim|valid_email|is_unique[usuarios.correo]');
-        $this->form_validation->set_rules('contrasena', 'Contraseña', 'required|min_length[10]');
+        $this->form_validation->set_rules('correo', 'Correo', 'required');
+        $this->form_validation->set_rules('contrasena', 'Contraseña', 'required');
         $this->form_validation->set_rules('tipo_usuario', 'Tipo de Usuario', 'required');
 
         if ($this->form_validation->run() === FALSE) {
@@ -92,7 +92,7 @@ class Dashboard extends MY_Controller
                 'nombre' => $nombre,
                 'apellidos' => $apellidos,
                 'correo' => $correo,
-                'contrasena' => password_hash($contrasena, PASSWORD_DEFAULT),
+                'contrasena' => $contrasena,
                 'tipo_usuario' => $tipo_usuario
             );
             $this->Admin_Model->crear_usuario($data);

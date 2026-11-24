@@ -1,71 +1,212 @@
 # DocTrack
-### Plataforma de gestión y validación documental académica
 
-Organiza entregas, revisiones y aprobaciones de documentos desde un solo lugar.
+<p align="center">
+  <strong>Sistema de gestión y validación documental</strong>
+</p>
 
-![PHP](https://img.shields.io/badge/PHP-7.4%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![CodeIgniter](https://img.shields.io/badge/CodeIgniter-3-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8%2B-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-4-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+<p align="center">
+  Plataforma web para centralizar la entrega, revisión y administración de documentos mediante diferentes perfiles de usuario.
+</p>
 
-**SARED × GAPE**
+<p align="center">
+  <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white" />
+  <img src="https://img.shields.io/badge/CodeIgniter-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" />
+</p>
 
-## Acerca del proyecto
-DocTrack es una aplicación web académica para administrar el ciclo de vida documental: el estudiante entrega un archivo, el profesor responsable lo revisa y el sistema registra su aceptación o rechazo con observaciones. El administrador gestiona usuarios y tipos de documentos.
+---
 
-Proyecto de portafolio que demuestra PHP, CodeIgniter 3, MySQL, autenticación por roles, validación de formularios y manejo de archivos.
+## Descripción
 
-## Funcionalidades
-| Perfil | Capacidades |
+DocTrack es un sistema web desarrollado para facilitar la administración y validación de documentos dentro de un entorno académico.
+
+La plataforma organiza el proceso documental mediante tres perfiles de usuario: alumno, maestro y administrador. Cada perfil dispone de diferentes permisos y herramientas según sus responsabilidades.
+
+Su objetivo es simplificar la entrega de documentos, facilitar su revisión y mantener organizado el proceso de validación.
+
+## Funcionalidades principales
+
+### 🎓 Alumno
+
+- Acceder a su panel de usuario.
+- Subir documentos al sistema.
+- Consultar los documentos enviados.
+- Visualizar sus archivos.
+- Eliminar documentos.
+
+### 👨‍🏫 Maestro
+
+- Consultar los documentos enviados por los alumnos.
+- Revisar los archivos recibidos.
+- Aceptar documentos.
+- Rechazar documentos.
+- Agregar comentarios durante el proceso de revisión.
+
+### ⚙️ Administrador
+
+- Consultar los usuarios registrados.
+- Crear nuevas cuentas.
+- Editar información de usuarios.
+- Eliminar usuarios.
+- Administrar el acceso a la plataforma.
+
+## Flujo de validación documental
+
+El funcionamiento general del sistema sigue este proceso:
+
+```text
+       ALUMNO
+          |
+          v
+   Sube un documento
+          |
+          v
+   MAESTRO REVISA
+          |
+     +----+----+
+     |         |
+     v         v
+  Aceptado  Rechazado
+     |         |
+     v         v
+  Validado  Comentarios
+     |
+     v
+  Proceso finalizado
+```
+
+## Tecnologías utilizadas
+
+| Tecnología | Aplicación |
 |---|---|
-| Estudiante | Enviar archivos y revisar el estado de sus entregas. |
-| Profesor | Consultar documentos asignados y aceptar o rechazar entregas con comentarios. |
-| Administrador | Administrar cuentas y gestionar el catálogo documental. |
+| PHP | Lógica del servidor |
+| CodeIgniter | Framework backend |
+| MySQL | Gestión de datos |
+| HTML5 | Estructura de interfaces |
+| CSS3 | Diseño visual |
+| JavaScript | Interactividad |
+| Bootstrap | Componentes y diseño responsive |
 
-## Stack tecnológico
-- Backend: PHP y CodeIgniter 3 (MVC).
-- Base de datos: MySQL / MariaDB.
-- Frontend: HTML5, CSS3, JavaScript y Bootstrap.
-- Seguridad: sesiones, password_hash(), password_verify(), validación y autorización por rol.
-- Archivos: validación de tipo y tamaño, nombres aleatorios y cargas excluidas de Git.
+## Estructura del proyecto
 
-## Instalación local
-1. Clona el repositorio:
-   ~~~bash
-   git clone https://github.com/SaredGarcia/DocTrack.git
-   cd DocTrack
-   ~~~
-2. Coloca el proyecto en el directorio público de Apache, por ejemplo C:/xampp/htdocs/DocTrack.
-3. Importa BDD/awva.sql desde phpMyAdmin o ejecuta:
-   ~~~bash
-   mysql -u root -p < BDD/awva.sql
-   ~~~
-4. Configura DB_HOST, DB_NAME, DB_USER y DB_PASSWORD como variables de entorno. En XAMPP local se usan valores predeterminados.
-5. Ajusta APP_BASE_URL en application/config/config.php.
-6. Inicia Apache y MySQL y abre http://localhost/DocTrack/.
+```text
+DocTrack/
+│
+├── BDD/
+│   └── Archivos relacionados con la base de datos
+│
+├── application/
+│   └── Aplicación y configuración de CodeIgniter
+│
+├── system/
+│   └── Núcleo del framework CodeIgniter
+│
+├── assets/
+│   └── Recursos del proyecto
+│
+├── uploads/
+│   └── Archivos y documentos cargados
+│
+├── index.php
+├── license.txt
+└── README.md
+```
 
-## Cuentas de demostración
-| Perfil | Correo |
-|---|---|
-| Administrador | admin@doctrack.test |
-| Profesor | profesor@doctrack.test |
-| Estudiante | alumno@doctrack.test |
+## Instalación y configuración
 
-Contraseña local para las tres cuentas: **DocTrackDemo2026!**. Son cuentas ficticias de demostración; no deben utilizarse en producción.
+### Requisitos
 
-## Seguridad y alcance
-- Contraseñas almacenadas como hashes y verificadas con password_verify().
-- Paneles protegidos por autenticación y rol.
-- Operaciones de revisión restringidas al profesor asignado.
-- El estudiante solo puede eliminar sus documentos pendientes.
-- Cargas con extensiones permitidas, límite de tamaño y nombres aleatorios.
-- Los archivos locales de usuarios no se versionan.
+- PHP compatible con la versión de CodeIgniter utilizada.
+- MySQL.
+- Apache o un servidor web compatible con PHP.
+- XAMPP, WAMP o un entorno local equivalente.
 
-DocTrack conserva CodeIgniter 3 para mostrar la evolución de una aplicación existente. Antes de producción aún se requiere completar pruebas de integración, descarga privada de archivos, CSRF en todos los formularios, HTTPS, claves de cifrado y respaldos. También conviene planear una migración a un framework con soporte vigente.
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/SaredGarcia/DocTrack.git
+```
+
+### 2. Preparar el entorno local
+
+Coloca la carpeta del proyecto dentro del directorio público de tu servidor local.
+
+Por ejemplo, con XAMPP:
+
+```text
+C:/xampp/htdocs/DocTrack
+```
+
+Inicia Apache y MySQL desde el panel de XAMPP.
+
+### 3. Configurar la base de datos
+
+1. Abre phpMyAdmin.
+2. Crea la base de datos correspondiente al proyecto.
+3. Revisa la carpeta `BDD` para localizar los archivos SQL disponibles.
+4. Importa el script de base de datos correspondiente.
+
+### 4. Configurar la conexión
+
+Abre:
+
+```text
+application/config/database.php
+```
+
+Configura los datos de conexión de acuerdo con tu entorno local:
+
+- Host de MySQL.
+- Nombre de la base de datos.
+- Usuario.
+- Contraseña.
+
+No publiques credenciales reales dentro del repositorio.
+
+### 5. Configurar la URL del proyecto
+
+Abre:
+
+```text
+application/config/config.php
+```
+
+Ajusta la variable `base_url` para que coincida con la dirección local donde ejecutarás DocTrack.
+
+### 6. Ejecutar el proyecto
+
+Con Apache y MySQL activos, abre en tu navegador:
+
+```text
+http://localhost/DocTrack/
+```
+
+La ruta final dependerá de la configuración de tu servidor local.
+
+## Seguridad y manejo de documentos
+
+El sistema contempla diferentes perfiles de usuario para separar las responsabilidades de administración, revisión y entrega documental.
+
+Para un entorno de producción se deben configurar correctamente los permisos de acceso, la validación de archivos, las credenciales de base de datos y la protección del directorio de documentos.
+
+## Alcance del proyecto
+
+DocTrack está orientado a la gestión documental en un entorno académico.
+
+Su estructura permite organizar las operaciones de alumnos, maestros y administradores dentro de un mismo sistema.
 
 ## Autor
-**Sared García** · Desarrollador Web  
+
+**Sared García**
+
+Desarrollador Web Junior.
+
 [GitHub](https://github.com/SaredGarcia)
 
 ---
-**SARED × GAPE** · Soluciones digitales para procesos reales.
+
+<p align="center">
+  <strong>SARED × GAPE</strong><br>
+  Soluciones digitales para procesos reales.
+</p>
