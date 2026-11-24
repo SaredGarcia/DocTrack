@@ -78,7 +78,7 @@ class Dashboard extends MY_Controller
         $this->form_validation->set_rules('apellidos', 'Apellidos', 'required');
         $this->form_validation->set_rules('correo', 'Correo', 'required|trim|valid_email|is_unique[usuarios.correo]');
         $this->form_validation->set_rules('contrasena', 'Contraseña', 'required|min_length[10]');
-        $this->form_validation->set_rules('tipo_usuario', 'Tipo de Usuario', 'required');
+        $this->form_validation->set_rules('tipo_usuario', 'Tipo de Usuario', 'required|in_list[Estudiante,Profesor,Admin]');
 
         if ($this->form_validation->run() === FALSE) {
             redirect('Admin/Dashboard/Inicio');
